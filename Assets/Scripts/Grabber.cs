@@ -8,22 +8,13 @@ public class Grabber : MonoBehaviour
     Touch touch;
     Camera mainCamera;
     private bool isPickedUp = false;
-
-    GameObject[,] grid;
-    [SerializeField] GameObject[] switches;
-
     GameObject nearestSwitch = null;
+    BoardManager boardManager;
 
     void Start()
     {
         mainCamera = Camera.main;
-
-        // Grid start size is 6x6.
-        // TO DO change it to 6x6.
-        grid = new GameObject[3,6];
-        CreateGrid();
-
-        
+        boardManager = FindObjectOfType<BoardManager>();
     }
 
     void Update()
@@ -31,30 +22,34 @@ public class Grabber : MonoBehaviour
         if(Input.touchCount > 0)
         {
             touch = Input.GetTouch(0);
-            // If we have a selected block we don't have to Raycast every time.
-            if(selectedBlock == null)
+            if(touch.phase == TouchPhase.Moved)
             {
-                RaycastHit hit = CastRay(touch);
-                if(hit.collider != null && hit.collider.gameObject.tag == "Block")
-                {   
-                    selectedBlock = hit.collider.gameObject;
-                }
-            }    
-
-            if(selectedBlock != null)
-            {
-                Vector3 position = new Vector3(touch.position.x, 
-                                                touch.position.y, 
-                                                mainCamera.WorldToScreenPoint(selectedBlock.transform.position).z);
-                Vector3 worldPos = mainCamera.ScreenToWorldPoint(position);
-                if(!isPickedUp)
+                // If we have a selected block we don't have to Raycast every time.
+                if(selectedBlock == null)
                 {
-                    selectedBlock.transform.position = new Vector3(worldPos.x, worldPos.y, worldPos.z - 1f);
-                    isPickedUp = true;
+                    RaycastHit hit = CastRay(touch);
+                    if(hit.collider != null && hit.collider.gameObject.tag == "Block")
+                    {   
+                        selectedBlock = hit.collider.gameObject;
+                    }
+                }    
+
+                if(selectedBlock != null)
+                {
+                    Vector3 position = new Vector3(touch.position.x, 
+                                                    touch.position.y, 
+                                                    mainCamera.WorldToScreenPoint(selectedBlock.transform.position).z);
+                    Vector3 worldPos = mainCamera.ScreenToWorldPoint(position);
+                    if(!isPickedUp)
+                    {
+                        selectedBlock.transform.position = new Vector3(worldPos.x, worldPos.y, worldPos.z - 1f);
+                        isPickedUp = true;
+                    }
+                    selectedBlock.transform.position = new Vector3(worldPos.x, worldPos.y, selectedBlock.transform.position.z);
+                    CalcuateDistanceToNearestSwitch();
                 }
-                selectedBlock.transform.position = new Vector3(worldPos.x, worldPos.y, selectedBlock.transform.position.z);
-                CalcuateDistanceToNearestSwitch();
             }
+            
         }
         else
         {
@@ -67,12 +62,7 @@ public class Grabber : MonoBehaviour
                                                                 selectedBlock.transform.position.z + 1f);
                     isPickedUp = false;
                 }
-                if(nearestSwitch != null)
-                {
-                    selectedBlock.transform.position = new Vector3(nearestSwitch.transform.position.x, 
-                                                                    nearestSwitch.transform.position.y, 
-                                                                    selectedBlock.transform.position.z);
-                }
+                DropPiece();
                 selectedBlock = null;
             }
         }
@@ -99,23 +89,24 @@ public class Grabber : MonoBehaviour
         return hit;
     }
 
-    private void CalcuateDistanceToNearestSwitch()
+    public void CalcuateDistanceToNearestSwitch()
     {
         float minDistanceToSwitch = 99f;
         GameObject tmpNearestSwitch = null;
-        for(int row = 0; row < grid.GetLength(0); row++)
+        for(int row = 0; row < boardManager.switchGrid.GetLength(0); row++)
         {
-            for(int col = 0; col < grid.GetLength(1); col++)
+            for(int col = 0; col < boardManager.switchGrid.GetLength(1); col++)
             {
                 // Ignoring z axis.
-                float distance = Vector2.Distance(grid[row,col].transform.position, selectedBlock.transform.position);
+                float distance = Vector2.Distance(boardManager.switchGrid[row,col].transform.position, 
+                                                  selectedBlock.transform.position);
                 // Prevent far distance placing.
                 if(distance < 0.5f)
                 {
                     if(distance < minDistanceToSwitch)
                     {
                         minDistanceToSwitch = distance;
-                        tmpNearestSwitch = grid[row,col];
+                        tmpNearestSwitch = boardManager.switchGrid[row,col];
                     }
                 }
                 else
@@ -124,17 +115,14 @@ public class Grabber : MonoBehaviour
         }
         nearestSwitch = tmpNearestSwitch;
     }
-
-    private void CreateGrid()
+    
+    private void DropPiece()
     {
-        int currentIndex = 0;
-        for(int row = 0; row < grid.GetLength(0); row++)
+        if(nearestSwitch != null)
         {
-            for(int col = 0; col < grid.GetLength(1); col++)
-            {
-                grid[row,col] = switches[currentIndex];
-                currentIndex += 1;
-            }
+            selectedBlock.transform.position = new Vector3(nearestSwitch.transform.position.x, 
+                                                            nearestSwitch.transform.position.y, 
+                                                            nearestSwitch.transform.position.z);
         }
     }
 }
