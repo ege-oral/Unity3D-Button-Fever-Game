@@ -122,8 +122,6 @@ public class Grabber : MonoBehaviour
             }
             else if(_selectedBlock.blockName == "+2")
             {
-                print(_selectedBlock.blockPlacePosition.x);
-                print(_selectedBlock.blockPlacePosition.y);
                 boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().isPlaceable = true;
 
@@ -134,6 +132,37 @@ public class Grabber : MonoBehaviour
                 boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().value = 0;
             }
+            else if(_selectedBlock.blockName == "+4")
+            {
+                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                                        (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().isPlaceable = true;
+
+                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                                        (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().isPlaceable = true;
+                
+                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                                        (int) _selectedBlock.blockPlacePosition.y + 1].GetComponent<Switch>().isPlaceable = true;
+
+
+                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                                        (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().value = 0;
+            }
+            else if(_selectedBlock.blockName == "+8")
+            {
+                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                                        (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().isPlaceable = true;
+
+                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                                        (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().isPlaceable = true;
+                
+                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x + 1, 
+                                        (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().isPlaceable = true;
+
+
+                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                                        (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().value = 0;
+            }
+
         }
         // When pick up reset _selectedBlock.blockPlacePosition.
         _selectedBlock.blockPlacePosition = new Vector2(99f,99f);
@@ -166,6 +195,7 @@ public class Grabber : MonoBehaviour
                 {
                     _nearestSwitch.isPlaceable = false;
                     _nearestSwitch.value = 1;
+                    // We change y and x places for matrix position.
                     selectedBlock.GetComponent<Block>().blockPlacePosition = new Vector2(nearestSwitch.transform.position.y,
                                                                                         nearestSwitch.transform.position.x);
 
@@ -184,15 +214,14 @@ public class Grabber : MonoBehaviour
             {
                 if((int) _nearestSwitch.transform.position.x - 1 > -1 && _nearestSwitch.isPlaceable)
                 {
-                    print(_nearestSwitch.transform.position.x);
-                    print(_nearestSwitch.transform.position.y);
                     // This location is different in boardManager switchGrid.
                     if(boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable)
                     {
                         _nearestSwitch.isPlaceable = false;
                         _nearestSwitch.value = 2;
-
+                        // Check if left switch is placable ?
                         boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable = false;
+                        // We change y and x places for matrix position.
                         selectedBlock.GetComponent<Block>().blockPlacePosition = new Vector2(nearestSwitch.transform.position.y,
                                                                                                 nearestSwitch.transform.position.x);
 
@@ -215,7 +244,63 @@ public class Grabber : MonoBehaviour
             {
                 if((int) _nearestSwitch.transform.position.x - 1 > -1 && (int) _nearestSwitch.transform.position.x + 1 < 6 && _nearestSwitch.isPlaceable)
                 {
-                    print("efe");
+                    // Check if left and right switch is placable ?
+                    if(boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable
+                       &&
+                       boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x + 1].GetComponent<Switch>().isPlaceable)
+                    {
+                            _nearestSwitch.isPlaceable = false;
+                            _nearestSwitch.value = 4;
+                            boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable = false;
+                            boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x + 1].GetComponent<Switch>().isPlaceable = false;
+
+                            selectedBlock.GetComponent<Block>().blockPlacePosition = new Vector2(nearestSwitch.transform.position.y,
+                                                                                                 nearestSwitch.transform.position.x);
+
+                            selectedBlock.transform.position = new Vector3(nearestSwitch.transform.position.x, 
+                                                                            nearestSwitch.transform.position.y, 
+                                                                            nearestSwitch.transform.position.z);
+                    }
+                    else
+                    {
+                        selectedBlock.transform.position = new Vector3(4f,6f,15f);
+                    }
+                }
+                else
+                {
+                    selectedBlock.transform.position = new Vector3(4f,6f,15f);
+                }
+            }
+
+            else if(name == "+8")
+            {
+                if((int) _nearestSwitch.transform.position.x - 1 > -1 && (int) _nearestSwitch.transform.position.y + 1 < 6 && _nearestSwitch.isPlaceable)
+                {
+                    if(boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable
+                       &&
+                       boardManager.switchGrid[(int) _nearestSwitch.transform.position.y + 1, (int) _nearestSwitch.transform.position.x].GetComponent<Switch>().isPlaceable)
+                    {
+                        _nearestSwitch.isPlaceable = false;
+                        _nearestSwitch.value = 8;
+
+                        boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable = false;
+                        boardManager.switchGrid[(int) _nearestSwitch.transform.position.y + 1, (int) _nearestSwitch.transform.position.x].GetComponent<Switch>().isPlaceable = false;
+
+                        selectedBlock.GetComponent<Block>().blockPlacePosition = new Vector2(nearestSwitch.transform.position.y,
+                                                                                                nearestSwitch.transform.position.x);
+
+                        selectedBlock.transform.position = new Vector3(nearestSwitch.transform.position.x, 
+                                                                        nearestSwitch.transform.position.y, 
+                                                                        nearestSwitch.transform.position.z);
+                    }
+                    else
+                    {
+                        selectedBlock.transform.position = new Vector3(4f,6f,15f);
+                    }
+                }
+                else
+                {
+                    selectedBlock.transform.position = new Vector3(4f,6f,15f);
                 }
             }
         }
