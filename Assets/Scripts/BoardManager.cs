@@ -13,11 +13,6 @@ public class BoardManager : MonoBehaviour
         CreateSwitchGrid();
     }
 
-    private void Update() 
-    {
-        
-    }
-
     private void CreateSwitchGrid()
     {
         int currentIndex = 0;
@@ -27,7 +22,6 @@ public class BoardManager : MonoBehaviour
             {
                 switchGrid[row, col] = switches[currentIndex];
                 currentIndex += 1;
-                print(switchGrid[row, col]);
             }
         }
     }

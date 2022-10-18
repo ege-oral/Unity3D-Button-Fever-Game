@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Switch : MonoBehaviour
 {
-    public bool isVisited = false; 
     public int value = 0;
+    public bool isPlaceable = true;
 
 
     // Start is called before the first frame update

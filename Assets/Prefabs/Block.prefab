@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8620120000355786169}
   - component: {fileID: 8620120000355786170}
   - component: {fileID: -1104953165828431294}
-  - component: {fileID: 7876169328195393973}
+  - component: {fileID: -8576378289553676511}
   m_Layer: 0
   m_Name: Block
   m_TagString: Block
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 8620120000355786164}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -98,7 +98,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7876169328195393973
+--- !u!114 &-8576378289553676511
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -112,3 +112,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockName: 
   blockValue: 0
+  blockPlacePosition: {x: 99, y: 99}
