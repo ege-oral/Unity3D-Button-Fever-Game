@@ -96,4 +96,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1937dd600d21ef842acbb92caa91b599, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  placeholders: []
+  isBlockPlaced: 0
+  holdingBlock: {fileID: 0}

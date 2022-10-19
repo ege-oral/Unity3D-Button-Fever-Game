@@ -10,9 +10,15 @@ public class Grabber : MonoBehaviour
 
     GameObject selectedBlock;
     GameObject nearestSwitch = null;
+    GameObject nearestPlaceholder = null;
     private bool isPickedUp = false;
 
     [SerializeField] GameObject[] placeholders;
+    [SerializeField] GameObject block1; // Holding +1 block.
+    [SerializeField] GameObject block2; // Holding +2 block.
+    [SerializeField] GameObject block4; // Holding +4 block.
+    [SerializeField] GameObject block8; // Holding +8 block.
+
 
     void Start()
     {
@@ -103,10 +109,31 @@ public class Grabber : MonoBehaviour
                 }
                 else
                     nearestSwitch = null;
-                //print(tmpNearestSwitch.name);
             }
         }
         nearestSwitch = tmpNearestSwitch;
+    }
+
+    private void CalcuateDistanceToNearestPlaceholder()
+    {
+        float minDistanceToPlaceholder = 99f;
+        GameObject tmpNearestPlaceholder = null;
+        for(int i = 0; i < placeholders.Length; i++)
+        {
+            float distance = Vector2.Distance(placeholders[i].transform.localPosition, 
+                                              selectedBlock.transform.position);
+            if(distance < 1f)
+            {
+                if(distance < minDistanceToPlaceholder)
+                {
+                    minDistanceToPlaceholder = distance;
+                    tmpNearestPlaceholder = placeholders[i];
+                }
+            }
+            else
+                nearestPlaceholder = null;
+        }
+        nearestPlaceholder = tmpNearestPlaceholder;
     }
 
     private void PickBlock()
@@ -166,17 +193,40 @@ public class Grabber : MonoBehaviour
             isPickedUp = true;
         }
         selectedBlock.transform.position = new Vector3(worldPos.x, worldPos.y, selectedBlock.transform.position.z);
+        CalcuateDistanceToNearestPlaceholder();
         CalcuateDistanceToNearestSwitch();
     }
 
-    
     private void DropBlock()
     {
-        string name = selectedBlock.GetComponent<Block>().blockName;
-        if(nearestSwitch != null)
+        string blockName = selectedBlock.GetComponent<Block>().blockName;
+        if(nearestPlaceholder != null)
+        {
+            if(nearestPlaceholder.GetComponent<BlockPlaceholder>().isBlockPlaced 
+               && 
+               nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock.GetComponent<Block>().blockName == selectedBlock.GetComponent<Block>().blockName)
+            {
+                MergeBlocks();
+            }
+            else if(!nearestPlaceholder.GetComponent<BlockPlaceholder>().isBlockPlaced)
+            {
+                selectedBlock.GetComponent<Block>().blockPlaceholder = nearestPlaceholder.GetComponent<BlockPlaceholder>();
+                nearestPlaceholder.GetComponent<BlockPlaceholder>().isBlockPlaced = true;
+                nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock = selectedBlock.gameObject;
+
+                selectedBlock.transform.position = new Vector3(nearestPlaceholder.transform.position.x, 
+                                                            nearestPlaceholder.transform.position.y, 
+                                                            nearestPlaceholder.transform.position.z);
+            }
+            else
+            {
+                FindEmptyPlaceHolder(selectedBlock);
+            }
+        }
+        else if(nearestSwitch != null)
         {
             Switch _nearestSwitch = nearestSwitch.GetComponent<Switch>();
-            if(name == "+1")
+            if(blockName == "+1")
             {
                 if(_nearestSwitch.isPlaceable)
                 {
@@ -196,7 +246,7 @@ public class Grabber : MonoBehaviour
                 }
             }
 
-            else if(name == "+2")
+            else if(blockName == "+2")
             {
                 if((int) _nearestSwitch.transform.position.x - 1 > -1 && _nearestSwitch.isPlaceable)
                 {
@@ -226,7 +276,7 @@ public class Grabber : MonoBehaviour
                 }
             }
 
-            else if(name == "+4")
+            else if(blockName == "+4")
             {
                 if((int) _nearestSwitch.transform.position.x - 1 > -1 && (int) _nearestSwitch.transform.position.x + 1 < 6 && _nearestSwitch.isPlaceable)
                 {
@@ -258,7 +308,7 @@ public class Grabber : MonoBehaviour
                 }
             }
 
-            else if(name == "+8")
+            else if(blockName == "+8")
             {
                 if((int) _nearestSwitch.transform.position.x - 1 > -1 && (int) _nearestSwitch.transform.position.y + 1 < 6 && _nearestSwitch.isPlaceable)
                 {
@@ -293,11 +343,6 @@ public class Grabber : MonoBehaviour
         }
     }
 
-    private void PickBlockFromPlaceHolder(GameObject selectedBlock)
-    {
-
-    }
-
     private void FindEmptyPlaceHolder(GameObject selectedBlock)
     {
         for(int i = 0; i < placeholders.Length; i ++)
@@ -311,6 +356,45 @@ public class Grabber : MonoBehaviour
                 selectedBlock.transform.position = placeholders[i].transform.position;
                 break;
             }
+        }
+    }
+
+    private void MergeBlocks()
+    {
+        if(selectedBlock.GetComponent<Block>().blockName == "+1")
+        {
+            Destroy(selectedBlock);
+            GameObject newObject = Instantiate(block2, 
+                                                nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock.transform.position,
+                                                Quaternion.identity);
+            newObject.GetComponent<Block>().blockPlaceholder = nearestPlaceholder.GetComponent<BlockPlaceholder>();
+            Destroy(nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock.gameObject);
+            nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock = newObject;
+        }
+
+        else if(selectedBlock.GetComponent<Block>().blockName == "+2")
+        {
+            Destroy(selectedBlock);
+            GameObject newObject = Instantiate(block4, 
+                                                nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock.transform.position,
+                                                Quaternion.identity);
+            newObject.GetComponent<Block>().blockPlaceholder = nearestPlaceholder.GetComponent<BlockPlaceholder>();
+            Destroy(nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock.gameObject);
+            nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock = newObject;
+        }
+
+        else if(selectedBlock.GetComponent<Block>().blockName == "+4")
+        {
+            Destroy(selectedBlock);
+            GameObject newObject = Instantiate(block8, 
+                                                nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock.transform.position,
+                                                Quaternion.identity);
+            newObject.GetComponent<Block>().blockPlaceholder = nearestPlaceholder.GetComponent<BlockPlaceholder>();
+            Destroy(nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock.gameObject);
+            nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock = newObject;
+        }
+        else{
+            FindEmptyPlaceHolder(selectedBlock);
         }
     }
 }
