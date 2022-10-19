@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4978317959437387891}
     m_Modifications:
+    - target: {fileID: 2273507906000213818, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8620120000355786164, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
       propertyPath: m_Name
       value: Block +8
@@ -114,6 +118,24 @@ PrefabInstance:
       propertyPath: m_Center.z
       value: 0.17069623
       objectReference: {fileID: 0}
+    - target: {fileID: 3983513092217094970, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
+      propertyPath: m_text
+      value: '+8
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5119740655793985096, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5119740655793985096, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.166
+      objectReference: {fileID: 0}
+    - target: {fileID: 5119740655793985096, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.136
+      objectReference: {fileID: 0}
     - target: {fileID: 8620120000355786164, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
       propertyPath: m_Name
       value: Block +8
@@ -180,6 +202,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4978317959437387891}
     m_Modifications:
+    - target: {fileID: 2273507906000213818, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8620120000355786164, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
       propertyPath: m_Name
       value: Block +8 (1)

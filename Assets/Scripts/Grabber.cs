@@ -67,7 +67,7 @@ public class Grabber : MonoBehaviour
                 {
                     selectedBlock.transform.position = new Vector3(selectedBlock.transform.position.x, 
                                                                 selectedBlock.transform.position.y, 
-                                                                selectedBlock.transform.position.z + 1f);
+                                                                selectedBlock.transform.position.z + 2f);
                     isPickedUp = false;
                 }
                 DropBlock();
@@ -164,9 +164,6 @@ public class Grabber : MonoBehaviour
             boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                     (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().value = 0;
 
-            // boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
-            //                         (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().holdingBlock.GetComponent<Block>().isInPath = false;
-
 
             boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                     (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().holdingBlock = null;
@@ -176,9 +173,7 @@ public class Grabber : MonoBehaviour
                 boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().isPlaceable = true;
 
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
-                                        (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().holdingBlock.GetComponent<Block>().isInPath = false;
-
+ 
                 boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().holdingBlock = null;
             }
@@ -189,17 +184,11 @@ public class Grabber : MonoBehaviour
                                         (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().isPlaceable = true;
 
                 boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
-                                        (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().holdingBlock.GetComponent<Block>().isInPath = false;
-                
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().holdingBlock = null;
                 
                 boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y + 1].GetComponent<Switch>().isPlaceable = true;
-                
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
-                                        (int) _selectedBlock.blockPlacePosition.y + 1].GetComponent<Switch>().holdingBlock.GetComponent<Block>().isInPath = false;
-                
+   
                 boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y + 1].GetComponent<Switch>().holdingBlock = null;
             }
@@ -209,18 +198,14 @@ public class Grabber : MonoBehaviour
                 boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().isPlaceable = true;
 
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
-                                        (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().holdingBlock.GetComponent<Block>().isInPath = false;
-                
+     
                 boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().holdingBlock = null;
                 
                 boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x + 1, 
                                         (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().isPlaceable = true;
 
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x + 1, 
-                                        (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().holdingBlock.GetComponent<Block>().isInPath = false;
-                
+               
                 boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x + 1, 
                                         (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().holdingBlock = null;
             }
@@ -237,7 +222,7 @@ public class Grabber : MonoBehaviour
 
         if(!isPickedUp)
         {
-            selectedBlock.transform.position = new Vector3(worldPos.x, worldPos.y, worldPos.z - 1f);
+            selectedBlock.transform.position = new Vector3(worldPos.x, worldPos.y, worldPos.z - 2f);
             isPickedUp = true;
         }
         selectedBlock.transform.position = new Vector3(worldPos.x, worldPos.y, selectedBlock.transform.position.z);
@@ -261,10 +246,7 @@ public class Grabber : MonoBehaviour
                 selectedBlock.GetComponent<Block>().blockPlaceholder = nearestPlaceholder.GetComponent<BlockPlaceholder>();
                 nearestPlaceholder.GetComponent<BlockPlaceholder>().isBlockPlaced = true;
                 nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock = selectedBlock.gameObject;
-
-                selectedBlock.transform.position = new Vector3(nearestPlaceholder.transform.position.x, 
-                                                            nearestPlaceholder.transform.position.y, 
-                                                            nearestPlaceholder.transform.position.z);                                        
+                PlaceBlockToPlaceholder(selectedBlock, nearestPlaceholder);
             }
             else
             {
@@ -418,7 +400,7 @@ public class Grabber : MonoBehaviour
                 _tmpPlaceHolder.isBlockPlaced = true;
                 _tmpPlaceHolder.holdingBlock = selectedBlock.gameObject;
                 selectedBlock.GetComponent<Block>().blockPlaceholder = _tmpPlaceHolder;
-                selectedBlock.transform.position = placeholders[i].transform.position;
+                PlaceBlockToPlaceholder(selectedBlock, placeholders[i]);
                 break;
             }
         }
@@ -426,12 +408,14 @@ public class Grabber : MonoBehaviour
 
     private void MergeBlocks()
     {
+        Vector3 _nearestPlaceholderPosition = nearestPlaceholder.transform.position;
         if(selectedBlock.GetComponent<Block>().blockName == "+1")
         {
             Destroy(selectedBlock);
             GameObject newObject = Instantiate(block2, 
-                                                nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock.transform.position,
-                                                Quaternion.identity);
+                                               new Vector3(_nearestPlaceholderPosition.x + 0.5f, _nearestPlaceholderPosition.y, _nearestPlaceholderPosition.z),
+                                               Quaternion.identity);
+                                               
             newObject.GetComponent<Block>().blockPlaceholder = nearestPlaceholder.GetComponent<BlockPlaceholder>();
             Destroy(nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock.gameObject);
             nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock = newObject;
@@ -441,7 +425,7 @@ public class Grabber : MonoBehaviour
         {
             Destroy(selectedBlock);
             GameObject newObject = Instantiate(block4, 
-                                                nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock.transform.position,
+                                                _nearestPlaceholderPosition,
                                                 Quaternion.identity);
             newObject.GetComponent<Block>().blockPlaceholder = nearestPlaceholder.GetComponent<BlockPlaceholder>();
             Destroy(nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock.gameObject);
@@ -452,7 +436,7 @@ public class Grabber : MonoBehaviour
         {
             Destroy(selectedBlock);
             GameObject newObject = Instantiate(block8, 
-                                                nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock.transform.position,
+                                                new Vector3(_nearestPlaceholderPosition.x + 0.5f, _nearestPlaceholderPosition.y - 0.5f, _nearestPlaceholderPosition.z),
                                                 Quaternion.identity);
             newObject.GetComponent<Block>().blockPlaceholder = nearestPlaceholder.GetComponent<BlockPlaceholder>();
             Destroy(nearestPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock.gameObject);
@@ -462,4 +446,28 @@ public class Grabber : MonoBehaviour
             FindEmptyPlaceHolder(selectedBlock);
         }
     }
+
+    private void PlaceBlockToPlaceholder(GameObject selectedBlock, GameObject nearestPlaceholder)
+    {
+        string blockName = selectedBlock.GetComponent<Block>().blockName;
+        if(blockName == "+1" || blockName == "+4")
+        {
+            selectedBlock.transform.position = new Vector3(nearestPlaceholder.transform.position.x, 
+                                                           nearestPlaceholder.transform.position.y, 
+                                                           nearestPlaceholder.transform.position.z);                                        
+        }
+        else if(blockName == "+2")
+        {
+            selectedBlock.transform.position = new Vector3(nearestPlaceholder.transform.position.x + 0.5f, 
+                                                           nearestPlaceholder.transform.position.y, 
+                                                           nearestPlaceholder.transform.position.z); 
+        }
+        else if(blockName == "+8")
+        {
+            selectedBlock.transform.position = new Vector3(nearestPlaceholder.transform.position.x + 0.5f, 
+                                                           nearestPlaceholder.transform.position.y - 0.5f, 
+                                                           nearestPlaceholder.transform.position.z); 
+        }
+    }
+
 }

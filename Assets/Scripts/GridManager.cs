@@ -18,7 +18,6 @@ public class GridManager : MonoBehaviour
         moneyHandler = FindObjectOfType<MoneyHandler>();
     }
 
-
     private void CreateSwitchGrid()
     {
         int currentIndex = 0;

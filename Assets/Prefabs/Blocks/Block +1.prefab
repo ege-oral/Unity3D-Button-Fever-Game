@@ -15,6 +15,14 @@ PrefabInstance:
       propertyPath: blockValue
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3983513092217094970, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
+      propertyPath: m_text
+      value: +1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5119740655793985096, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.062
+      objectReference: {fileID: 0}
     - target: {fileID: 8620120000355786164, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
       propertyPath: m_Name
       value: Block +1
