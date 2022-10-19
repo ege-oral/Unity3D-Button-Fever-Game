@@ -10,15 +10,4 @@ public class Block : MonoBehaviour
     // Because we use that value. 
     public Vector2 blockPlacePosition = new Vector2(99f, 99f);
     public BlockPlaceholder blockPlaceholder = null;
-
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

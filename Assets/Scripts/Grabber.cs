@@ -6,7 +6,7 @@ public class Grabber : MonoBehaviour
 {
     Touch touch;
     Camera mainCamera;
-    BoardManager boardManager;
+    GridManager boardManager;
 
     GameObject selectedBlock;
     GameObject nearestSwitch = null;
@@ -14,16 +14,16 @@ public class Grabber : MonoBehaviour
     private bool isPickedUp = false;
 
     [SerializeField] GameObject[] placeholders;
-    [SerializeField] GameObject block1; // Holding +1 block.
-    [SerializeField] GameObject block2; // Holding +2 block.
-    [SerializeField] GameObject block4; // Holding +4 block.
-    [SerializeField] GameObject block8; // Holding +8 block.
+    [SerializeField] GameObject block1; // +1 block.
+    [SerializeField] GameObject block2; // +2 block.
+    [SerializeField] GameObject block4; // +4 block.
+    [SerializeField] GameObject block8; // +8 block.
 
 
     void Start()
     {
         mainCamera = Camera.main;
-        boardManager = FindObjectOfType<BoardManager>();
+        boardManager = FindObjectOfType<GridManager>();
     }
 
     void Update()
@@ -177,6 +177,7 @@ public class Grabber : MonoBehaviour
                 boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x + 1, 
                                         (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().isPlaceable = true;
             }
+            boardManager.FindConnectedSwitches();
         }
         // When pick up reset _selectedBlock.blockPlacePosition.
         _selectedBlock.blockPlacePosition = new Vector2(99f,99f);
@@ -216,7 +217,7 @@ public class Grabber : MonoBehaviour
 
                 selectedBlock.transform.position = new Vector3(nearestPlaceholder.transform.position.x, 
                                                             nearestPlaceholder.transform.position.y, 
-                                                            nearestPlaceholder.transform.position.z);
+                                                            nearestPlaceholder.transform.position.z);                                        
             }
             else
             {
@@ -239,6 +240,7 @@ public class Grabber : MonoBehaviour
                     selectedBlock.transform.position = new Vector3(nearestSwitch.transform.position.x, 
                                                                     nearestSwitch.transform.position.y, 
                                                                     nearestSwitch.transform.position.z);
+                    boardManager.FindConnectedSwitches(); 
                 }
                 else
                 {
@@ -264,6 +266,7 @@ public class Grabber : MonoBehaviour
                         selectedBlock.transform.position = new Vector3(nearestSwitch.transform.position.x, 
                                                                         nearestSwitch.transform.position.y, 
                                                                         nearestSwitch.transform.position.z);
+                        boardManager.FindConnectedSwitches(); 
                     }
                     else
                     {
@@ -296,6 +299,7 @@ public class Grabber : MonoBehaviour
                             selectedBlock.transform.position = new Vector3(nearestSwitch.transform.position.x, 
                                                                             nearestSwitch.transform.position.y, 
                                                                             nearestSwitch.transform.position.z);
+                            boardManager.FindConnectedSwitches(); 
                     }
                     else
                     {
@@ -329,6 +333,7 @@ public class Grabber : MonoBehaviour
                         selectedBlock.transform.position = new Vector3(nearestSwitch.transform.position.x, 
                                                                         nearestSwitch.transform.position.y, 
                                                                         nearestSwitch.transform.position.z);
+                        boardManager.FindConnectedSwitches(); 
                     }
                     else
                     {
