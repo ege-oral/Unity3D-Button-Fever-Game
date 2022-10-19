@@ -7,6 +7,7 @@ public class Grabber : MonoBehaviour
     Touch touch;
     Camera mainCamera;
     GridManager boardManager;
+    MoneyHandler moneyHandler;
 
     GameObject selectedBlock;
     GameObject nearestSwitch = null;
@@ -24,6 +25,7 @@ public class Grabber : MonoBehaviour
     {
         mainCamera = Camera.main;
         boardManager = FindObjectOfType<GridManager>();
+        moneyHandler = FindObjectOfType<MoneyHandler>();
     }
 
     void Update()
@@ -42,10 +44,18 @@ public class Grabber : MonoBehaviour
                         selectedBlock = hit.collider.gameObject;
                     }
                 }    
-
                 if(selectedBlock != null)
                 {
                     PickBlock();
+                }
+            }
+            // If Block is in path earn money.
+            else if(touch.phase == TouchPhase.Began)
+            {
+                RaycastHit hit = CastRay(touch);
+                if(hit.collider != null && hit.collider.gameObject.tag == "Block" && hit.collider.gameObject.GetComponent<Block>().isInPath)
+                {
+                    moneyHandler.EarnMoney();
                 }
             }
         }

@@ -24,4 +24,9 @@ public class MoneyHandler : MonoBehaviour
         currentMoneyText.text = $"Current Money: {currentMoney.ToString()}";
         moneyToBeEarnedText.text = $"Money To Be Earned: {moneyToBeEarned.ToString()}";
     }
+
+    public void EarnMoney()
+    {
+        CurrentMoney += MoneyToBeEarned;
+    }
 }
