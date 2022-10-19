@@ -9,6 +9,7 @@ public class Block : MonoBehaviour
     // We can't say that blockPlacePosition = Vector2.zero
     // Because we use that value. 
     public Vector2 blockPlacePosition = new Vector2(99f, 99f);
+    public BlockPlaceholder blockPlaceholder = null;
 
     void Start()
     {
