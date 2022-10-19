@@ -34,21 +34,17 @@ public class GridManager : MonoBehaviour
 
     public void FindConnectedSwitches()
     {
-        moneyHandler.CurrentMoney = 0;
-        if(switchGrid[0, 5].GetComponent<Switch>().isPlaceable == true) { return; }
-
-        for(int row = 0; row < switchGrid.GetLength(0); row++)
+        moneyHandler.MoneyToBeEarned = 0;
+        ResetConnections();
+        
+        if(switchGrid[0, 5].GetComponent<Switch>().isPlaceable == false)
         {
-            for(int col = switchGrid.GetLength(1) - 1; col > -1; col--)
-            {
-                switchGrid[row, col].GetComponent<Switch>().isVisited = false;
-            }
+            // Starting from right down position (0, 5).
+            ExploreGrid(switchGrid, 0, 5);
         }
-
-        Explore(switchGrid, 0, 5);
     }
 
-    private void Explore(GameObject[,] swithcGrid, int row, int col)
+    private void ExploreGrid(GameObject[,] swithcGrid, int row, int col)
     {
         if(!(row >= 0) || !(row < swithcGrid.GetLength(0))) { return; }
         if(!(col >= 0) || !(col < swithcGrid.GetLength(1))) { return; }
@@ -59,12 +55,27 @@ public class GridManager : MonoBehaviour
         if(_switch.isPlaceable) { return; }
 
         _switch.isVisited = true;
-        moneyHandler.CurrentMoney += _switch.value;
+        _switch.holdingBlock.GetComponent<Block>().isInPath = true;
+        moneyHandler.MoneyToBeEarned += _switch.value;
 
-        Explore(switchGrid, row + 1, col);
-        Explore(switchGrid, row - 1, col);
-        Explore(switchGrid, row, col + 1);
-        Explore(switchGrid, row, col - 1);
+        ExploreGrid(switchGrid, row + 1, col);
+        ExploreGrid(switchGrid, row - 1, col);
+        ExploreGrid(switchGrid, row, col + 1);
+        ExploreGrid(switchGrid, row, col - 1);
     }
     
+    private void ResetConnections()
+    {
+        for(int row = 0; row < switchGrid.GetLength(0); row++)
+        {
+            for(int col = switchGrid.GetLength(1) - 1; col > -1; col--)
+            {
+                switchGrid[row, col].GetComponent<Switch>().isVisited = false;
+                if(switchGrid[row, col].GetComponent<Switch>().holdingBlock != null)
+                {
+                    switchGrid[row, col].GetComponent<Switch>().holdingBlock.GetComponent<Block>().isInPath = false;
+                }
+            }
+        }
+    }
 }

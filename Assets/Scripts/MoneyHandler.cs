@@ -5,12 +5,15 @@ using TMPro;
 
 public class MoneyHandler : MonoBehaviour
 {
-    private static float currnetMoney = 0;
-    public float CurrentMoney { get{ return currnetMoney; } set{ currnetMoney = value; }}
+    private static float currentMoney = 0;
+    public float CurrentMoney { get{ return currentMoney; } set{ currentMoney = value; }}
+
+    private static float moneyToBeEarned = 0;
+    public float MoneyToBeEarned { get{ return moneyToBeEarned; } set{ moneyToBeEarned = value; }}
 
     [SerializeField] TextMeshProUGUI currentMoneyText;
+    [SerializeField] TextMeshProUGUI moneyToBeEarnedText;
 
-    // Update is called once per frame
     void Update()
     {
         DisplayMoney();
@@ -18,6 +21,7 @@ public class MoneyHandler : MonoBehaviour
 
     private void DisplayMoney()
     {
-        currentMoneyText.text = $"Money: {currnetMoney.ToString()}";
+        currentMoneyText.text = $"Current Money: {currentMoney.ToString()}";
+        moneyToBeEarnedText.text = $"Money To Be Earned: {moneyToBeEarned.ToString()}";
     }
 }
