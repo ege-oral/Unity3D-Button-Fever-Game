@@ -15,6 +15,10 @@ PrefabInstance:
       propertyPath: blockValue
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: -8576378289553676511, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
+      propertyPath: blockMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 267c3d74c0e4d954aa3ff14e0002939e, type: 2}
     - target: {fileID: -1104953165828431294, guid: 1e32be0ba49367c4db0a796db8a1ae5c, type: 3}
       propertyPath: m_Size.x
       value: 3

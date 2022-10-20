@@ -6,7 +6,7 @@ public class Grabber : MonoBehaviour
 {
     Touch touch;
     Camera mainCamera;
-    GridManager boardManager;
+    GridManager gridManager;
     MoneyHandler moneyHandler;
     MoneyMultiplierHandler moneyMultiplierHandler;
 
@@ -21,11 +21,17 @@ public class Grabber : MonoBehaviour
     [SerializeField] GameObject block4; // +4 block.
     [SerializeField] GameObject block8; // +8 block.
 
+    [SerializeField] Material defaultMaterial;
+
+    GameObject tmpSelectedBlock;
+    Vector3 currentBlockPosition;
+    bool getCurrentBlock = true;
+
 
     void Start()
     {
         mainCamera = Camera.main;
-        boardManager = FindObjectOfType<GridManager>();
+        gridManager = FindObjectOfType<GridManager>();
         moneyHandler = FindObjectOfType<MoneyHandler>();
         moneyMultiplierHandler = FindObjectOfType<MoneyMultiplierHandler>();
     }
@@ -103,12 +109,12 @@ public class Grabber : MonoBehaviour
     {
         float minDistanceToSwitch = Mathf.Infinity;
         GameObject tmpNearestSwitch = null;
-        for(int row = 0; row < boardManager.switchGrid.GetLength(0); row++)
+        for(int row = 0; row < gridManager.switchGrid.GetLength(0); row++)
         {
-            for(int col = 0; col < boardManager.switchGrid.GetLength(1); col++)
+            for(int col = 0; col < gridManager.switchGrid.GetLength(1); col++)
             {
                 // Ignoring z axis.
-                float distance = Vector2.Distance(boardManager.switchGrid[row,col].transform.position, 
+                float distance = Vector2.Distance(gridManager.switchGrid[row,col].transform.position, 
                                                   selectedBlock.transform.position);
                 // Prevent far distance placing.
                 if(distance < 1f)
@@ -116,7 +122,7 @@ public class Grabber : MonoBehaviour
                     if(distance < minDistanceToSwitch)
                     {
                         minDistanceToSwitch = distance;
-                        tmpNearestSwitch = boardManager.switchGrid[row,col];
+                        tmpNearestSwitch = gridManager.switchGrid[row,col];
                     }
                 }
                 else
@@ -151,6 +157,10 @@ public class Grabber : MonoBehaviour
     private void PickBlock()
     {
         Block _selectedBlock = selectedBlock.GetComponent<Block>();
+        GetBlockValues();
+        ChangeBlockMaterialToDefault();
+    
+
         if(_selectedBlock.blockPlaceholder != null)
         {
             _selectedBlock.blockPlaceholder.GetComponent<BlockPlaceholder>().isBlockPlaced = false;
@@ -160,60 +170,60 @@ public class Grabber : MonoBehaviour
 
         else if(_selectedBlock.blockPlacePosition != new Vector2(99f,99f))
         {
-            boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+            gridManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                     (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().isPlaceable = true;
 
-            boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+            gridManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                     (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().value = 0;
 
 
-            boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+            gridManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                     (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().holdingBlock = null;
 
             
 
             if(_selectedBlock.blockName == "+2")
             {
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                gridManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().isPlaceable = true;
 
  
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                gridManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().holdingBlock = null;
             }
             else if(_selectedBlock.blockName == "+4")
             {
 
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                gridManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().isPlaceable = true;
 
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                gridManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().holdingBlock = null;
                 
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                gridManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y + 1].GetComponent<Switch>().isPlaceable = true;
    
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                gridManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y + 1].GetComponent<Switch>().holdingBlock = null;
             }
             else if(_selectedBlock.blockName == "+8")
             {
 
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                gridManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().isPlaceable = true;
 
      
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
+                gridManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                         (int) _selectedBlock.blockPlacePosition.y - 1].GetComponent<Switch>().holdingBlock = null;
                 
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x + 1, 
+                gridManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x + 1, 
                                         (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().isPlaceable = true;
 
                
-                boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x + 1, 
+                gridManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x + 1, 
                                         (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().holdingBlock = null;
             }
-            boardManager.FindConnectedSwitches();
+            gridManager.FindConnectedSwitches();
             moneyMultiplierHandler.CheckIfRowFull();
         }
         // When pick up reset _selectedBlock.blockPlacePosition.
@@ -239,6 +249,8 @@ public class Grabber : MonoBehaviour
     private void DropBlock()
     {
         string blockName = selectedBlock.GetComponent<Block>().blockName;
+        getCurrentBlock = true;
+        ChangeBlockMaterialToOriginal();
         if(nearestPlaceholder != null)
         {
             if(nearestPlaceholder.GetComponent<BlockPlaceholder>().isBlockPlaced 
@@ -276,7 +288,7 @@ public class Grabber : MonoBehaviour
                     selectedBlock.transform.position = new Vector3(nearestSwitch.transform.position.x, 
                                                                     nearestSwitch.transform.position.y, 
                                                                     nearestSwitch.transform.position.z);
-                    boardManager.FindConnectedSwitches(); 
+                    gridManager.FindConnectedSwitches(); 
                     moneyMultiplierHandler.CheckIfRowFull();
                 }
                 else
@@ -289,16 +301,16 @@ public class Grabber : MonoBehaviour
             {
                 if((int) _nearestSwitch.transform.position.x - 1 > -1 && _nearestSwitch.isPlaceable)
                 {
-                    // This location is different in boardManager switchGrid.
+                    // This location is different in gridManager switchGrid.
                     // Check if left switch is placable ?
-                    if(boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable)
+                    if(gridManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable)
                     {
                         _nearestSwitch.isPlaceable = false;
                         _nearestSwitch.value = 2;
                         _nearestSwitch.holdingBlock = selectedBlock.gameObject;
 
-                        boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable = false;
-                        boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().holdingBlock = selectedBlock.gameObject;
+                        gridManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable = false;
+                        gridManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().holdingBlock = selectedBlock.gameObject;
                         // We change y and x places for matrix position.
                         selectedBlock.GetComponent<Block>().blockPlacePosition = new Vector2(nearestSwitch.transform.position.y,
                                                                                                 nearestSwitch.transform.position.x);
@@ -306,7 +318,7 @@ public class Grabber : MonoBehaviour
                         selectedBlock.transform.position = new Vector3(nearestSwitch.transform.position.x, 
                                                                         nearestSwitch.transform.position.y, 
                                                                         nearestSwitch.transform.position.z);
-                        boardManager.FindConnectedSwitches(); 
+                        gridManager.FindConnectedSwitches(); 
                         moneyMultiplierHandler.CheckIfRowFull();
                     }
                     else
@@ -325,19 +337,19 @@ public class Grabber : MonoBehaviour
                 if((int) _nearestSwitch.transform.position.x - 1 > -1 && (int) _nearestSwitch.transform.position.x + 1 < 6 && _nearestSwitch.isPlaceable)
                 {
                     // Check if left and right switch is placable ?
-                    if(boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable
+                    if(gridManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable
                        &&
-                       boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x + 1].GetComponent<Switch>().isPlaceable)
+                       gridManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x + 1].GetComponent<Switch>().isPlaceable)
                     {
                             _nearestSwitch.isPlaceable = false;
                             _nearestSwitch.value = 4;
                             _nearestSwitch.holdingBlock = selectedBlock.gameObject;
 
-                            boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable = false;
-                            boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().holdingBlock = selectedBlock.gameObject;
+                            gridManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable = false;
+                            gridManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().holdingBlock = selectedBlock.gameObject;
 
-                            boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x + 1].GetComponent<Switch>().isPlaceable = false;
-                            boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x + 1].GetComponent<Switch>().holdingBlock = selectedBlock.gameObject;
+                            gridManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x + 1].GetComponent<Switch>().isPlaceable = false;
+                            gridManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x + 1].GetComponent<Switch>().holdingBlock = selectedBlock.gameObject;
                             // We change y and x places for matrix position.
                             selectedBlock.GetComponent<Block>().blockPlacePosition = new Vector2(nearestSwitch.transform.position.y,
                                                                                                  nearestSwitch.transform.position.x);
@@ -345,7 +357,7 @@ public class Grabber : MonoBehaviour
                             selectedBlock.transform.position = new Vector3(nearestSwitch.transform.position.x, 
                                                                             nearestSwitch.transform.position.y, 
                                                                             nearestSwitch.transform.position.z);
-                            boardManager.FindConnectedSwitches(); 
+                            gridManager.FindConnectedSwitches(); 
                             moneyMultiplierHandler.CheckIfRowFull();
                     }
                     else
@@ -364,19 +376,19 @@ public class Grabber : MonoBehaviour
                 if((int) _nearestSwitch.transform.position.x - 1 > -1 && (int) _nearestSwitch.transform.position.y + 1 < 6 && _nearestSwitch.isPlaceable)
                 {
                     // Check if left and up switch is placable ?
-                    if(boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable
+                    if(gridManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable
                        &&
-                       boardManager.switchGrid[(int) _nearestSwitch.transform.position.y + 1, (int) _nearestSwitch.transform.position.x].GetComponent<Switch>().isPlaceable)
+                       gridManager.switchGrid[(int) _nearestSwitch.transform.position.y + 1, (int) _nearestSwitch.transform.position.x].GetComponent<Switch>().isPlaceable)
                     {
                         _nearestSwitch.isPlaceable = false;
                         _nearestSwitch.value = 8;
                         _nearestSwitch.holdingBlock = selectedBlock.gameObject;
 
-                        boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable = false;
-                        boardManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().holdingBlock = selectedBlock.gameObject;
+                        gridManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().isPlaceable = false;
+                        gridManager.switchGrid[(int) _nearestSwitch.transform.position.y, (int) _nearestSwitch.transform.position.x - 1].GetComponent<Switch>().holdingBlock = selectedBlock.gameObject;
 
-                        boardManager.switchGrid[(int) _nearestSwitch.transform.position.y + 1, (int) _nearestSwitch.transform.position.x].GetComponent<Switch>().isPlaceable = false;
-                        boardManager.switchGrid[(int) _nearestSwitch.transform.position.y + 1, (int) _nearestSwitch.transform.position.x].GetComponent<Switch>().holdingBlock = selectedBlock.gameObject;
+                        gridManager.switchGrid[(int) _nearestSwitch.transform.position.y + 1, (int) _nearestSwitch.transform.position.x].GetComponent<Switch>().isPlaceable = false;
+                        gridManager.switchGrid[(int) _nearestSwitch.transform.position.y + 1, (int) _nearestSwitch.transform.position.x].GetComponent<Switch>().holdingBlock = selectedBlock.gameObject;
 
                         selectedBlock.GetComponent<Block>().blockPlacePosition = new Vector2(nearestSwitch.transform.position.y,
                                                                                                 nearestSwitch.transform.position.x);
@@ -384,7 +396,7 @@ public class Grabber : MonoBehaviour
                         selectedBlock.transform.position = new Vector3(nearestSwitch.transform.position.x, 
                                                                         nearestSwitch.transform.position.y, 
                                                                         nearestSwitch.transform.position.z);
-                        boardManager.FindConnectedSwitches(); 
+                        gridManager.FindConnectedSwitches(); 
                         moneyMultiplierHandler.CheckIfRowFull();
                     }
                     else
@@ -397,6 +409,14 @@ public class Grabber : MonoBehaviour
                     FindEmptyPlaceHolder(selectedBlock);
                 }
             }
+        }
+        else
+        {
+            ReturnBlock();
+        }
+        if(!tmpSelectedBlock.activeInHierarchy)
+        {
+            Destroy(tmpSelectedBlock);
         }
     }
 
@@ -479,5 +499,65 @@ public class Grabber : MonoBehaviour
                                                            nearestPlaceholder.transform.position.z); 
         }
     }
+
+    private void ChangeBlockMaterialToDefault()
+    {
+        selectedBlock.GetComponent<Renderer>().material = defaultMaterial;
+
+        if(selectedBlock.transform.childCount > 0)
+        {
+            foreach(Transform child in selectedBlock.transform)
+            {
+                if(child.gameObject.tag != "Text")
+                {
+                    child.GetComponent<Renderer>().material = defaultMaterial;
+                }
+            }
+        }
+    }
+
+    private void ChangeBlockMaterialToOriginal()
+    {
+        selectedBlock.GetComponent<Renderer>().material = selectedBlock.GetComponent<Block>().blockMaterial;
+
+        if(selectedBlock.transform.childCount > 0)
+        {
+            foreach(Transform child in selectedBlock.transform)
+            {
+                if(child.gameObject.tag != "Text")
+                {
+                    child.GetComponent<Renderer>().material = selectedBlock.GetComponent<Block>().blockMaterial;
+                }
+            }
+        }
+    }
+
+    private void GetBlockValues()
+    {
+        if(getCurrentBlock)
+        {
+            tmpSelectedBlock = Instantiate(selectedBlock);
+
+            tmpSelectedBlock.SetActive(false);
+            getCurrentBlock = false;
+        }
+    }
+
+    private void ReturnBlock()
+    {
+        Destroy(selectedBlock);
+        tmpSelectedBlock.SetActive(true);
+        if(tmpSelectedBlock.GetComponent<Block>().blockPlaceholder != null)
+        {
+            tmpSelectedBlock.GetComponent<Block>().blockPlaceholder.GetComponent<BlockPlaceholder>().isBlockPlaced = true;
+            tmpSelectedBlock.GetComponent<Block>().blockPlaceholder.GetComponent<BlockPlaceholder>().holdingBlock = tmpSelectedBlock;
+        }
+        else if(tmpSelectedBlock.GetComponent<Block>().blockPlacePosition != new Vector2(99f,99f))
+        {
+            FindEmptyPlaceHolder(tmpSelectedBlock);
+        }
+
+    }
+
 
 }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3983513092217094970}
   m_Layer: 0
   m_Name: Value Text
-  m_TagString: Untagged
+  m_TagString: Text
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -287,4 +287,5 @@ MonoBehaviour:
   blockValue: 0
   blockPlacePosition: {x: 99, y: 99}
   blockPlaceholder: {fileID: 0}
+  blockMaterial: {fileID: 0}
   isInPath: 0
