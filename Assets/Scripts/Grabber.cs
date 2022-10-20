@@ -8,6 +8,7 @@ public class Grabber : MonoBehaviour
     Camera mainCamera;
     GridManager boardManager;
     MoneyHandler moneyHandler;
+    MoneyMultiplierHandler moneyMultiplierHandler;
 
     GameObject selectedBlock;
     GameObject nearestSwitch = null;
@@ -26,6 +27,7 @@ public class Grabber : MonoBehaviour
         mainCamera = Camera.main;
         boardManager = FindObjectOfType<GridManager>();
         moneyHandler = FindObjectOfType<MoneyHandler>();
+        moneyMultiplierHandler = FindObjectOfType<MoneyMultiplierHandler>();
     }
 
     void Update()
@@ -99,7 +101,7 @@ public class Grabber : MonoBehaviour
 
     private void CalcuateDistanceToNearestSwitch()
     {
-        float minDistanceToSwitch = 99f;
+        float minDistanceToSwitch = Mathf.Infinity;
         GameObject tmpNearestSwitch = null;
         for(int row = 0; row < boardManager.switchGrid.GetLength(0); row++)
         {
@@ -126,7 +128,7 @@ public class Grabber : MonoBehaviour
 
     private void CalcuateDistanceToNearestPlaceholder()
     {
-        float minDistanceToPlaceholder = 99f;
+        float minDistanceToPlaceholder = Mathf.Infinity;
         GameObject tmpNearestPlaceholder = null;
         for(int i = 0; i < placeholders.Length; i++)
         {
@@ -167,6 +169,8 @@ public class Grabber : MonoBehaviour
 
             boardManager.switchGrid[(int) _selectedBlock.blockPlacePosition.x, 
                                     (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().holdingBlock = null;
+
+            
 
             if(_selectedBlock.blockName == "+2")
             {
@@ -210,6 +214,7 @@ public class Grabber : MonoBehaviour
                                         (int) _selectedBlock.blockPlacePosition.y].GetComponent<Switch>().holdingBlock = null;
             }
             boardManager.FindConnectedSwitches();
+            moneyMultiplierHandler.CheckIfRowFull();
         }
         // When pick up reset _selectedBlock.blockPlacePosition.
         _selectedBlock.blockPlacePosition = new Vector2(99f,99f);
@@ -226,6 +231,7 @@ public class Grabber : MonoBehaviour
             isPickedUp = true;
         }
         selectedBlock.transform.position = new Vector3(worldPos.x, worldPos.y, selectedBlock.transform.position.z);
+        
         CalcuateDistanceToNearestPlaceholder();
         CalcuateDistanceToNearestSwitch();
     }
@@ -271,6 +277,7 @@ public class Grabber : MonoBehaviour
                                                                     nearestSwitch.transform.position.y, 
                                                                     nearestSwitch.transform.position.z);
                     boardManager.FindConnectedSwitches(); 
+                    moneyMultiplierHandler.CheckIfRowFull();
                 }
                 else
                 {
@@ -300,6 +307,7 @@ public class Grabber : MonoBehaviour
                                                                         nearestSwitch.transform.position.y, 
                                                                         nearestSwitch.transform.position.z);
                         boardManager.FindConnectedSwitches(); 
+                        moneyMultiplierHandler.CheckIfRowFull();
                     }
                     else
                     {
@@ -338,6 +346,7 @@ public class Grabber : MonoBehaviour
                                                                             nearestSwitch.transform.position.y, 
                                                                             nearestSwitch.transform.position.z);
                             boardManager.FindConnectedSwitches(); 
+                            moneyMultiplierHandler.CheckIfRowFull();
                     }
                     else
                     {
@@ -376,6 +385,7 @@ public class Grabber : MonoBehaviour
                                                                         nearestSwitch.transform.position.y, 
                                                                         nearestSwitch.transform.position.z);
                         boardManager.FindConnectedSwitches(); 
+                        moneyMultiplierHandler.CheckIfRowFull();
                     }
                     else
                     {

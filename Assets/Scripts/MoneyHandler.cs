@@ -11,6 +11,9 @@ public class MoneyHandler : MonoBehaviour
     private static float moneyToBeEarned = 0;
     public float MoneyToBeEarned { get{ return moneyToBeEarned; } set{ moneyToBeEarned = value; }}
 
+    public float[] moneyMultipliersValues = new float[] {1, 1, 1, 1, 1, 1};
+
+
     [SerializeField] TextMeshProUGUI currentMoneyText;
     [SerializeField] TextMeshProUGUI moneyToBeEarnedText;
 
@@ -22,11 +25,11 @@ public class MoneyHandler : MonoBehaviour
     private void DisplayMoney()
     {
         currentMoneyText.text = $"Current Money: {currentMoney.ToString()}";
-        moneyToBeEarnedText.text = $"Money To Be Earned: {moneyToBeEarned.ToString()}";
+        moneyToBeEarnedText.text = $"Money To Be Earned: {(MoneyToBeEarned * moneyMultipliersValues[0] * moneyMultipliersValues[1] * moneyMultipliersValues[2] * moneyMultipliersValues[3] * moneyMultipliersValues[4] * moneyMultipliersValues[5]).ToString()}";
     }
 
     public void EarnMoney()
     {
-        CurrentMoney += MoneyToBeEarned;
+        CurrentMoney += (MoneyToBeEarned * moneyMultipliersValues[0] * moneyMultipliersValues[1] * moneyMultipliersValues[2] * moneyMultipliersValues[3] * moneyMultipliersValues[4] * moneyMultipliersValues[5]);
     }
 }

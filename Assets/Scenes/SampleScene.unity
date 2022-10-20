@@ -762,6 +762,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d0e20b82a62c93469c87feb1d1e5c83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moneyMultipliersValues:
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
   currentMoneyText: {fileID: 1308555393}
   moneyToBeEarnedText: {fileID: 659913977}
 --- !u!4 &305417387
@@ -2317,6 +2324,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1752759478}
     m_Modifications:
+    - target: {fileID: 3802202702559030122, guid: 050536934239f9c408f288482ee5f3e4, type: 3}
+      propertyPath: multiplyValue
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 4292395015111492491, guid: 050536934239f9c408f288482ee5f3e4, type: 3}
       propertyPath: m_Name
       value: Money Multiplier (2)
@@ -2391,6 +2402,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1752759478}
     m_Modifications:
+    - target: {fileID: 3802202702559030122, guid: 050536934239f9c408f288482ee5f3e4, type: 3}
+      propertyPath: multiplyValue
+      value: 1.6
+      objectReference: {fileID: 0}
     - target: {fileID: 4292395015111492491, guid: 050536934239f9c408f288482ee5f3e4, type: 3}
       propertyPath: m_Name
       value: Money Multiplier (6)
@@ -3803,7 +3818,7 @@ GameObject:
   - component: {fileID: 1752759478}
   - component: {fileID: 1752759479}
   m_Layer: 0
-  m_Name: Money Multipliers
+  m_Name: Money Multiplier Handler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3839,7 +3854,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1752759477}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3109dab187c15794abc8c7a7fe8772d1, type: 3}
+  m_Script: {fileID: 11500000, guid: d5d0158f281b0d14d806f64a41a285de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   moneyMultipliers:
@@ -4245,6 +4260,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1752759478}
     m_Modifications:
+    - target: {fileID: 3802202702559030122, guid: 050536934239f9c408f288482ee5f3e4, type: 3}
+      propertyPath: multiplyValue
+      value: 1.4
+      objectReference: {fileID: 0}
     - target: {fileID: 4292395015111492491, guid: 050536934239f9c408f288482ee5f3e4, type: 3}
       propertyPath: m_Name
       value: Money Multiplier (4)
@@ -4331,6 +4350,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1752759478}
     m_Modifications:
+    - target: {fileID: 3802202702559030122, guid: 050536934239f9c408f288482ee5f3e4, type: 3}
+      propertyPath: multiplyValue
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4292395015111492491, guid: 050536934239f9c408f288482ee5f3e4, type: 3}
       propertyPath: m_Name
       value: Money Multiplier (5)
@@ -4524,6 +4547,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1752759478}
     m_Modifications:
+    - target: {fileID: 3802202702559030122, guid: 050536934239f9c408f288482ee5f3e4, type: 3}
+      propertyPath: multiplyValue
+      value: 1.3
+      objectReference: {fileID: 0}
     - target: {fileID: 4292395015111492491, guid: 050536934239f9c408f288482ee5f3e4, type: 3}
       propertyPath: m_Name
       value: Money Multiplier (3)
@@ -4669,6 +4696,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1752759478}
     m_Modifications:
+    - target: {fileID: 3802202702559030122, guid: 050536934239f9c408f288482ee5f3e4, type: 3}
+      propertyPath: multiplyValue
+      value: 1.1
+      objectReference: {fileID: 0}
     - target: {fileID: 4292395015111492491, guid: 050536934239f9c408f288482ee5f3e4, type: 3}
       propertyPath: m_Name
       value: Money Multiplier (1)
