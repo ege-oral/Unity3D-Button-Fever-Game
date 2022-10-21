@@ -17,11 +17,6 @@ public class MoneyMultiplierHandler : MonoBehaviour
         moneyHandler = FindObjectOfType<MoneyHandler>();
     }
 
-    void Update()
-    {
-        //CheckIfRowFull();
-    }
-
     public void CheckIfRowFull()
     {
         for(int row = 0; row < gridManager.switchGrid.GetLength(0); row++)

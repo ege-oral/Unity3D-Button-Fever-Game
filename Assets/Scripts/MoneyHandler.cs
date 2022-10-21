@@ -5,7 +5,7 @@ using TMPro;
 
 public class MoneyHandler : MonoBehaviour
 {
-    private static float currentMoney = 200;
+    private static float currentMoney = 1000;
     public float CurrentMoney { get{ return currentMoney; } set{ currentMoney = value; }}
 
     private static float moneyEarnedSoFar = 0;
@@ -30,12 +30,17 @@ public class MoneyHandler : MonoBehaviour
     {
         currentMoneyText.text = $"Current Money: {currentMoney.ToString("F2")}$";
         moneyEarnedSoFarText.text = $"Earned So Far: {moneyEarnedSoFar.ToString("F2")}$";
-        moneyToBeEarnedText.text = $"Money To Be Earned: {(MoneyToBeEarned * moneyMultipliersValues[0] * moneyMultipliersValues[1] * moneyMultipliersValues[2] * moneyMultipliersValues[3] * moneyMultipliersValues[4] * moneyMultipliersValues[5]).ToString("F2")}$";
+        moneyToBeEarnedText.text = $"Money To Be Earned: {MultiplyMoney().ToString("F2")}$";
     }
 
     public void EarnMoney()
     {
-        CurrentMoney += (MoneyToBeEarned * moneyMultipliersValues[0] * moneyMultipliersValues[1] * moneyMultipliersValues[2] * moneyMultipliersValues[3] * moneyMultipliersValues[4] * moneyMultipliersValues[5]);
-        MoneyEarnedSoFar += (MoneyToBeEarned * moneyMultipliersValues[0] * moneyMultipliersValues[1] * moneyMultipliersValues[2] * moneyMultipliersValues[3] * moneyMultipliersValues[4] * moneyMultipliersValues[5]);
+        CurrentMoney += MultiplyMoney();
+        MoneyEarnedSoFar += MultiplyMoney();
+    }
+
+    private float MultiplyMoney()
+    {
+        return (MoneyToBeEarned * moneyMultipliersValues[0] * moneyMultipliersValues[1] * moneyMultipliersValues[2] * moneyMultipliersValues[3] * moneyMultipliersValues[4] * moneyMultipliersValues[5]);
     }
 }
