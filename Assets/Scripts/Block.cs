@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    [SerializeField] int blockValue;
+    [SerializeField] public int blockValue;
     [SerializeField] public string blockName;
 
     public bool isInPath = false;

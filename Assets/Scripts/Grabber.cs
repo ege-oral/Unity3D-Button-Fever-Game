@@ -163,7 +163,6 @@ public class Grabber : MonoBehaviour
 
     private void DropBlock()
     {
-        
         getCurrentBlock = true;
 
         Block _selectedBlock = selectedBlock.GetComponent<Block>();
@@ -412,9 +411,11 @@ public class Grabber : MonoBehaviour
                 selectedBlock.GetComponent<Block>().blockPlaceholder = _placeHolder;
                 ChangeBlockMaterial(selectedBlock, selectedBlock.GetComponent<Block>().blockMaterial);
                 PlaceBlockToPlaceholder(selectedBlock, placeholders[i]);
-                break;
+                return;
             }
         }
+        
+        ReturnBlock();
     }
 
     private void PlaceBlockToPlaceholder(GameObject selectedBlock, GameObject nearestPlaceholder)
@@ -518,9 +519,49 @@ public class Grabber : MonoBehaviour
         }
         else if(tmpSelectedBlock.GetComponent<Block>().blockPlacePosition != new Vector2(99f,99f))
         {
-            FindEmptyPlaceHolder(tmpSelectedBlock);
+            ReturnBlockToSwitch();
+        }
+    }
+
+    private void ReturnBlockToSwitch()
+    {
+        Block _tmp = tmpSelectedBlock.GetComponent<Block>();
+        Switch _switch = gridManager.switchGrid[(int) _tmp.blockPlacePosition.x, (int) _tmp.blockPlacePosition.y].GetComponent<Switch>();
+        _switch.value = _tmp.blockValue;
+        _switch.isPlaceable = false;
+        _switch.holdingBlock = tmpSelectedBlock;
+
+        if(_tmp.blockName == "+2")
+        {
+            Switch _leftSwitch = gridManager.switchGrid[(int) _tmp.blockPlacePosition.x, (int) _tmp.blockPlacePosition.y - 1].GetComponent<Switch>();
+            _leftSwitch.isPlaceable = false;
+            _leftSwitch.holdingBlock = tmpSelectedBlock;
         }
 
+        else if(_tmp.blockName == "+4")
+        {
+            Switch _leftSwitch = gridManager.switchGrid[(int) _tmp.blockPlacePosition.x, (int) _tmp.blockPlacePosition.y - 1].GetComponent<Switch>();
+            _leftSwitch.isPlaceable = false;
+            _leftSwitch.holdingBlock = tmpSelectedBlock;
+           
+            Switch _rightSwitch = gridManager.switchGrid[(int) _tmp.blockPlacePosition.x, (int) _tmp.blockPlacePosition.y + 1].GetComponent<Switch>();
+            _rightSwitch.isPlaceable = false;
+            _rightSwitch.holdingBlock = tmpSelectedBlock;
+        }
+
+        else if(_tmp.blockName == "+8")
+        {
+            Switch _leftSwitch = gridManager.switchGrid[(int) _tmp.blockPlacePosition.x, (int) _tmp.blockPlacePosition.y - 1].GetComponent<Switch>();
+            _leftSwitch.isPlaceable = false;
+            _leftSwitch.holdingBlock = tmpSelectedBlock;
+           
+            Switch _upSwitch = gridManager.switchGrid[(int) _tmp.blockPlacePosition.x + 1, (int) _tmp.blockPlacePosition.y].GetComponent<Switch>();
+            _upSwitch.isPlaceable = false;
+            _upSwitch.holdingBlock = tmpSelectedBlock;
+        }
+
+        gridManager.FindConnectedSwitches(); 
+        moneyMultiplierHandler.CheckIfRowFull();
     }
 
 }
