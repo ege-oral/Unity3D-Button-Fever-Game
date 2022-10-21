@@ -6,6 +6,7 @@ public class GridManager : MonoBehaviour
 {
     public GameObject[,] switchGrid = new GameObject[6,6];
     [SerializeField] GameObject[] switches;
+    Grabber grabber;
     MoneyHandler moneyHandler;
     
     private void Awake() 
@@ -15,6 +16,7 @@ public class GridManager : MonoBehaviour
 
     private void Start() 
     {
+        grabber = FindObjectOfType<Grabber>();
         moneyHandler = FindObjectOfType<MoneyHandler>();
     }
 
@@ -55,6 +57,7 @@ public class GridManager : MonoBehaviour
 
         _switch.isVisited = true;
         _switch.holdingBlock.GetComponent<Block>().isInPath = true;
+        grabber.ChangeBlockMaterial(_switch.holdingBlock, _switch.holdingBlock.GetComponent<Block>().blockMaterial);
         moneyHandler.MoneyToBeEarned += _switch.value;
 
         ExploreGrid(switchGrid, row + 1, col);

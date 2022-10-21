@@ -89,7 +89,7 @@ public class Grabber : MonoBehaviour
     private void PickBlock()
     {
         GetBlockValues();
-        ChangeBlockMaterial(defaultMaterial);
+        ChangeBlockMaterial(selectedBlock, defaultMaterial);
         
         Block _selectedBlock = selectedBlock.GetComponent<Block>();
 
@@ -163,12 +163,13 @@ public class Grabber : MonoBehaviour
 
     private void DropBlock()
     {
-        ChangeBlockMaterial(selectedBlock.GetComponent<Block>().blockMaterial);
+        
         getCurrentBlock = true;
 
         Block _selectedBlock = selectedBlock.GetComponent<Block>();
         if(nearestPlaceholder != null)
         {
+            ChangeBlockMaterial(selectedBlock, selectedBlock.GetComponent<Block>().blockMaterial);
             BlockPlaceholder _nearestPlaceholder = nearestPlaceholder.GetComponent<BlockPlaceholder>();
             if(_nearestPlaceholder.isBlockPlaced && _nearestPlaceholder.holdingBlock.GetComponent<Block>().blockName == _selectedBlock.blockName)
             {
@@ -399,7 +400,6 @@ public class Grabber : MonoBehaviour
         nearestPlaceholder = _nearestPlaceholder;
     }
 
-    
     private void FindEmptyPlaceHolder(GameObject selectedBlock)
     {
         for(int i = 0; i < placeholders.Length; i ++)
@@ -410,12 +410,36 @@ public class Grabber : MonoBehaviour
                 _placeHolder.isBlockPlaced = true;
                 _placeHolder.holdingBlock = selectedBlock.gameObject;
                 selectedBlock.GetComponent<Block>().blockPlaceholder = _placeHolder;
+                ChangeBlockMaterial(selectedBlock, selectedBlock.GetComponent<Block>().blockMaterial);
                 PlaceBlockToPlaceholder(selectedBlock, placeholders[i]);
                 break;
             }
         }
     }
 
+    private void PlaceBlockToPlaceholder(GameObject selectedBlock, GameObject nearestPlaceholder)
+    {
+        Block _selectedBlock = selectedBlock.GetComponent<Block>();
+        if(_selectedBlock.blockName == "+1" || _selectedBlock.blockName == "+4")
+        {
+            selectedBlock.transform.position = new Vector3(nearestPlaceholder.transform.position.x, 
+                                                           nearestPlaceholder.transform.position.y, 
+                                                           nearestPlaceholder.transform.position.z);                                        
+        }
+        else if(_selectedBlock.blockName == "+2")
+        {
+            selectedBlock.transform.position = new Vector3(nearestPlaceholder.transform.position.x + 0.5f, 
+                                                           nearestPlaceholder.transform.position.y, 
+                                                           nearestPlaceholder.transform.position.z); 
+        }
+        else if(_selectedBlock.blockName == "+8")
+        {
+            selectedBlock.transform.position = new Vector3(nearestPlaceholder.transform.position.x + 0.5f, 
+                                                           nearestPlaceholder.transform.position.y - 0.5f, 
+                                                           nearestPlaceholder.transform.position.z); 
+        }
+    }
+    
     private void MergeBlocks()
     {
         Vector3 _nearestPos = nearestPlaceholder.transform.position;
@@ -457,30 +481,7 @@ public class Grabber : MonoBehaviour
         }
     }
 
-    private void PlaceBlockToPlaceholder(GameObject selectedBlock, GameObject nearestPlaceholder)
-    {
-        Block _selectedBlock = selectedBlock.GetComponent<Block>();
-        if(_selectedBlock.blockName == "+1" || _selectedBlock.blockName == "+4")
-        {
-            selectedBlock.transform.position = new Vector3(nearestPlaceholder.transform.position.x, 
-                                                           nearestPlaceholder.transform.position.y, 
-                                                           nearestPlaceholder.transform.position.z);                                        
-        }
-        else if(_selectedBlock.blockName == "+2")
-        {
-            selectedBlock.transform.position = new Vector3(nearestPlaceholder.transform.position.x + 0.5f, 
-                                                           nearestPlaceholder.transform.position.y, 
-                                                           nearestPlaceholder.transform.position.z); 
-        }
-        else if(_selectedBlock.blockName == "+8")
-        {
-            selectedBlock.transform.position = new Vector3(nearestPlaceholder.transform.position.x + 0.5f, 
-                                                           nearestPlaceholder.transform.position.y - 0.5f, 
-                                                           nearestPlaceholder.transform.position.z); 
-        }
-    }
-
-    private void ChangeBlockMaterial(Material material)
+    public void ChangeBlockMaterial(GameObject selectedBlock, Material material)
     {
         selectedBlock.GetComponent<Renderer>().material = material;
 
