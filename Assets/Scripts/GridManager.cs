@@ -8,6 +8,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] GameObject[] switches;
     Grabber grabber;
     MoneyHandler moneyHandler;
+    [SerializeField] Material defaultMaterial;
     
     private void Awake() 
     {
@@ -37,12 +38,13 @@ public class GridManager : MonoBehaviour
     {
         moneyHandler.MoneyToBeEarned = 0;
         ResetConnections();
-        
+               
         if(switchGrid[0, 5].GetComponent<Switch>().isPlaceable == false)
         {
             // Starting from right down position (0, 5).
             ExploreGrid(switchGrid, 0, 5);
         }
+        ResetBlockColor(); 
     }
 
     private void ExploreGrid(GameObject[,] swithcGrid, int row, int col)
@@ -76,6 +78,28 @@ public class GridManager : MonoBehaviour
                 if(switchGrid[row, col].GetComponent<Switch>().holdingBlock != null)
                 {
                     switchGrid[row, col].GetComponent<Switch>().holdingBlock.GetComponent<Block>().isInPath = false;
+                }
+            }
+        }
+    }
+
+    public void ResetBlockColor()
+    {
+        for(int row = 0; row < switchGrid.GetLength(0); row++)
+        {
+            for(int col = 0; col < switchGrid.GetLength(1); col++)
+            {
+                if(switchGrid[row, col].GetComponent<Switch>().holdingBlock != null)
+                {
+                    Block _block = switchGrid[row, col].GetComponent<Switch>().holdingBlock.GetComponent<Block>();
+                    if(_block.isInPath)
+                    {
+                        grabber.ChangeBlockMaterial(switchGrid[row, col].GetComponent<Switch>().holdingBlock, switchGrid[row, col].GetComponent<Switch>().holdingBlock.GetComponent<Block>().blockMaterial);
+                    }
+                    else
+                    {
+                        grabber.ChangeBlockMaterial(switchGrid[row, col].GetComponent<Switch>().holdingBlock, defaultMaterial);
+                    }
                 }
             }
         }
